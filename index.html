@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Link Hub</title>
+    <!-- FontAwesome ikonkalari uchun ulash -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Umumiy o'zgaruvchilar (Light Mode) */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+            --text-color: #1e293b;
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: rgba(0, 0, 0, 0.05);
+            --hover-shadow: rgba(0, 0, 0, 0.15);
+            --pulse-color: rgba(30, 41, 59, 0.2);
+            --btn-bg: rgba(255, 255, 255, 0.6);
+            --icon-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Dark Mode o'zgaruvchilari (to'q ko'k va qora uslubda) */
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+            --text-color: #f8fafc;
+            --glass-bg: rgba(15, 23, 42, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.4);
+            --hover-shadow: rgba(0, 0, 0, 0.8);
+            --pulse-color: rgba(255, 255, 255, 0.2);
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --icon-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        /* Animatsiyalar */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profil rasmi atrofidagi yengil to'lqin */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 var(--pulse-color); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+        }
+
+        /* Sekin yuqoriga-pastga suzuvchi effekt */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Asosiy markaziy konteyner */
+        .container {
+            max-width: 450px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        /* Elementlar paydo bo'lish effekti */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+        }
+        
+        /* Tema o'zgartirgich tugmasi */
+        .theme-switch-wrapper {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .theme-switch {
+            background: var(--btn-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px var(--glass-shadow);
+            outline: none;
+        }
+
+        .theme-switch i {
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        /* Header (Profil rasmi, Ism va Bio) */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--glass-border);
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite; /* Pulse animatsiyasi */
+            box-shadow: 0 8px 25px var(--glass-shadow);
+        }
+
+        .name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .bio {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        /* Asosiy Linklar ro'yxati */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Suzuvchi effekt uchun alohida tashqi o'rovchi qavat */
+        .link-wrapper {
+            animation: float 4s ease-in-out infinite;
+        }
+        /* Har xil vaqtlarda suzishini boshlash uchun delay berish */
+        .link-wrapper:nth-child(1) { animation-delay: 0s; }
+        .link-wrapper:nth-child(2) { animation-delay: 0.7s; }
+        .link-wrapper:nth-child(3) { animation-delay: 1.4s; }
+        .link-wrapper:nth-child(4) { animation-delay: 2.1s; }
+        .link-wrapper:nth-child(5) { animation-delay: 2.8s; }
+
+        /* Asosiy tugma dizayni */
+        .link-btn {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: var(--btn-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px var(--glass-shadow);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+
+        /* Tugmadagi dumaloq ikonka xonasi */
+        .link-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--icon-bg);
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .link-text {
+            flex-grow: 1;
+            text-align: center;
+            margin-right: 44px; /* Ikonka bilan muvozanat saqlash uchun */
+            font-size: 1.05rem;
+        }
+
+        /* Tugma ustiga kelganda o'tadigan porlash effekti (Shining Line) */
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Hover qilingandagi trigger holatlari */
+        .link-btn:hover {
+            transform: scale(1.05); /* 5% ga kattalashtirish */
+            box-shadow: 0 12px 25px var(--hover-shadow); /* Soya o'zgarishi */
+        }
+
+        .link-btn:hover::before {
+            left: 150%; /* Porlashni o'ngga surish */
+        }
+
+        /* Footer (Ijtimoiy tarmoqlar) */
+        .social-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .social-icon {
+            color: var(--text-color);
+            background: var(--btn-bg);
+            border: 1px solid var(--glass-border);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 1.3rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px var(--glass-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.15) translateY(-4px); /* Element kattalashib tepaga ko'tariladi */
+            box-shadow: 0 10px 20px var(--hover-shadow);
+            background: var(--text-color);
+            color: var(--bg-gradient); /* Hoverda ikonka rangi teskarisiga aylanadi */
+        }
+
+        /* HTML elementlarining ekranga chiqish kechikish vaqti */
+        .delay-0 { animation-delay: 0s; }
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.45s; }
+        .delay-4 { animation-delay: 0.6s; }
+        .delay-5 { animation-delay: 0.75s; }
+        .delay-6 { animation-delay: 0.9s; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Tema o'zgartirgich -->
+    <div class="theme-switch-wrapper fade-in-up delay-0">
+        <button class="theme-switch" id="theme-btn" aria-label="Temani O'zgartirish">
+            <!-- Asl holatda Dark bo'lgani uchun Quyosh ikonasi (Light mode'ga o'tish uchun) yoniq turadi -->
+            <i class="fas fa-sun" id="theme-icon"></i>
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Header: Profil Qismi -->
+        <header class="header fade-in-up delay-1">
+            <img src="https://i.pravatar.cc/300?img=11" alt="Alisher Rustamov" class="profile-img">
+            <h1 class="name">Alisher Rustamov</h1>
+            <p class="bio">Raqamli mahsulotlar yaratuvchisi.<br>Minimalizm va zamonaviy veb-dizayn ixlosmandi.</p>
+        </header>
+
+        <!-- Asosiy Linklar -->
+        <main class="links-container">
+            <div class="link-wrapper fade-in-up delay-2">
+                <a href="#" class="link-btn">
+                    <div class="link-icon"><i class="fas fa-desktop"></i></div>
+                    <span class="link-text">Shaxsiy Veb-saytim</span>
+                </a>
+            </div>
+            
+            <div class="link-wrapper fade-in-up delay-3">
+                <a href="#" class="link-btn">
+                    <div class="link-icon"><i class="fab fa-youtube"></i></div>
+                    <span class="link-text">YouTube Videolarim</span>
+                </a>
+            </div>
+
+            <div class="link-wrapper fade-in-up delay-4">
+                <a href="#" class="link-btn">
+                    <div class="link-icon"><i class="fas fa-pen-nib"></i></div>
+                    <span class="link-text">So'nggi Maqolalarim</span>
+                </a>
+            </div>
+
+            <div class="link-wrapper fade-in-up delay-5">
+                <a href="#" class="link-btn">
+                    <div class="link-icon"><i class="fas fa-briefcase"></i></div>
+                    <span class="link-text">Mening Loyihalarim</span>
+                </a>
+            </div>
+
+            <div class="link-wrapper fade-in-up delay-6">
+                <a href="#" class="link-btn">
+                    <div class="link-icon"><i class="fas fa-envelope"></i></div>
+                    <span class="link-text">Men bilan bo'glanish</span>
+                </a>
+            </div>
+        </main>
+
+        <!-- Footer: Ijtimoiy Tarmoqlar -->
+        <footer class="social-container fade-in-up delay-6">
+            <a href="#" class="social-icon" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+            <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </footer>
+    </div>
+
+    <!-- Funksionallik (Dark/Light rejimi) -->
+    <script>
+        // Domen elementlari
+        const themeBtn = document.getElementById('theme-btn');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        // Xotiradan temani o'qish (yoki standart "dark" qilish)
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        htmlElement.setAttribute('data-theme', currentTheme);
+        updateIcon(currentTheme);
+
+        // Tema o'zgartirish tugmasini eshitish
+        themeBtn.addEventListener('click', () => {
+            const newTheme = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Tanlovni brauzerga saqlash
+            updateIcon(newTheme);
+        });
+
+        // Tugma ikonasini hozirgi temaga moslab o'zgartirish
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.className = 'fas fa-sun'; // Darkda quyosh (Lightga o'tkazish uchun signal)
+            } else {
+                themeIcon.className = 'fas fa-moon'; // Lightda oy (Darkga o'tkazish uchun signal)
+            }
+        }
+    </script>
+</body>
+</html>
